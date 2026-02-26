@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSCO Family U+ 특판 혜택 - 점심시간 1분 투자로 통신비 절감</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome (for icons instead of SVG) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chosen Palette: Trust & Energy (Posco Blue + UPlus Pink) -->
+    <!-- Application Structure Plan: 
+         1. Header: Brand trust anchor (POSCO + U+).
+         2. Hero Section: High-impact hook (Version A) with immediate value proposition.
+         3. Interactive Savings Simulator: The core "Data Analyst" feature. Allows users to input current spend and visualize potential savings/cash benefits dynamically via Chart.js. This transforms passive reading into active personalization.
+         4. Benefit Deep Dive: Card-based layout for key selling points (OTT, Penalty support, etc.), easily scannable on mobile.
+         5. Plan Explorer: Tabbed interface to filter options based on user persona (e.g., Netflix lover vs. Budget focus).
+         6. Social Proof: JavaScript-driven rolling ticker to build trust with "real-time" peer validation.
+         7. Action Section: Urgency-driven form with "Daiso Coupon" incentive and countdown timer.
+         8. Floating CTA: Persistent access to support.
+    -->
+    <!-- Visualization & Content Choices:
+         - Savings Simulator: Goal -> Personalize Value. Method -> Interactive Bar Chart (Chart.js). Justification -> Users need to see *their* specific benefit to convert.
+         - Benefit Cards: Goal -> Inform. Method -> Grid Layout with FontAwesome icons. Justification -> Scannable, clean UI.
+         - Social Ticker: Goal -> Trust. Method -> JS Interval Text Animation. Justification -> Creates a sense of community and activity.
+         - Confirmation: NO SVG graphics used (FontAwesome employed). NO Mermaid JS used.
+    -->
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F3F4F6; /* Light gray background */
+        }
+
+        /* Custom Colors */
+        .bg-posco { background-color: #005098; }
+        .text-posco { color: #005098; }
+        .bg-uplus { background-color: #E6007E; }
+        .text-uplus { color: #E6007E; }
+        .border-uplus { border-color: #E6007E; }
+
+        /* Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-custom {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        .animate-pulse-fast {
+            animation: pulse-custom 1.5s infinite;
+        }
+
+        /* Floating Button */
+        .floating-btn {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Sticky Header -->
+    <header class="fixed top-0 w-full bg-white shadow-md z-40 transition-all duration-300" id="main-header">
+        <div class="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="bg-posco text-white text-xs font-bold px-2 py-1 rounded">Family 전용</span>
+            </div>
+            <div class="flex items-center text-sm font-bold text-gray-600">
+                <span class="text-posco">POSCO</span>
+                <span class="mx-2 text-gray-300">|</span>
+                <span class="text-uplus">LG U+</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container (Mobile Optimized) -->
+    <main class="max-w-md mx-auto bg-white min-h-screen shadow-xl pt-14 pb-24 overflow-hidden">
+
+        <!-- Section 1: Hero (Hook & Headline) -->
+        <section class="relative px-6 pt-12 pb-16 text-center overflow-hidden bg-cover bg-center" style="background-image: url('main image.jpg');">
+            <!-- Dark Overlay for text readability -->
+            <div class="absolute inset-0 bg-gray-900/70"></div>
+
+            <div class="relative z-10 flex flex-col items-center">
+                <!-- Badge -->
+                <div class="inline-block bg-uplus text-white text-sm font-black px-5 py-2 rounded-full shadow-lg transform -rotate-2 border-2 border-white mb-6 animate-bounce">
+                    단독 혜택 팡팡! 🎉
+                </div>
+
+                <h1 class="text-3xl font-black leading-tight mb-4 text-white drop-shadow-md">
+                    점심시간 딱 <span class="text-pink-400 underline decoration-4 decoration-pink-400/50">1분 투자</span>로,<br>
+                    <span class="text-yellow-400 text-4xl mt-2 block font-black">현금 100만원</span>
+                </h1>
+                <p class="text-gray-200 font-medium mb-8 leading-relaxed drop-shadow">
+                    쓰던 번호 그대로 인터넷 결합만 하세요.<br>
+                    <strong class="text-white">포스코 패밀리</strong>만을 위한<br>
+                    U+ 단독 혜택이 쏟아집니다.
+                </p>
+                <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-4 border border-white/20 flex items-center justify-between w-full max-w-sm">
+                    <div class="text-left">
+                        <p class="text-xs text-gray-600 mb-1 font-bold">POSCO 특판 혜택 마감</p>
+                        <p class="text-red-600 font-black text-lg" id="countdown-timer">00일 00:00:00</p>
+                    </div>
+                    <button onclick="scrollToForm()" class="bg-posco text-white text-sm font-bold px-4 py-3 rounded-lg hover:bg-blue-800 transition shadow-md">
+                        혜택 확인하기 <i class="fa-solid fa-arrow-down ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Simulator (Data Visualization) -->
+        <section class="px-6 py-12 bg-white">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">💰 내 혜택 미리보기</h2>
+                <p class="text-sm text-gray-500">현재 납부 중인 월 통신비를 설정해보세요.<br>포스코 임직원 예상 절감액을 분석해 드립니다.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 shadow-inner">
+                <!-- Slider Input -->
+                <div class="mb-8">
+                    <label for="bill-slider" class="block text-sm font-bold text-gray-700 mb-4 flex justify-between">
+                        <span>현재 월 통신비 (가족 합산)</span>
+                        <span class="text-uplus text-lg" id="bill-display">100,000원</span>
+                    </label>
+                    <input type="range" id="bill-slider" min="50000" max="300000" step="10000" value="100000" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
+                    <div class="flex justify-between text-xs text-gray-400 mt-2">
+                        <span>5만원</span>
+                        <span>30만원</span>
+                    </div>
+                </div>
+
+                <!-- Analysis Result Chart -->
+                <div class="chart-container mb-4">
+                    <canvas id="savingsChart"></canvas>
+                </div>
+
+                <!-- Text Summary -->
+                <div class="text-center bg-white rounded-xl p-4 shadow-sm border border-pink-100">
+                    <p class="text-gray-500 text-sm mb-1">예상 2년 절감액 + 현금 100만원 혜택</p>
+                    <p class="text-3xl font-black text-posco" id="total-benefit-display">1,600,000원</p>
+                    <p class="text-xs text-gray-400 mt-2">* 추정치이며 요금제/결합 조건에 따라 상이함</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Benefits Infographic (Solutions) -->
+        <section class="px-6 py-12 bg-posco text-white rounded-t-3xl -mt-6 relative z-10">
+            <div class="text-center mb-10">
+                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold mb-3 inline-block">POSCO Benefits</span>
+                <h2 class="text-2xl font-bold">왜 지금 바꿔야 할까요?</h2>
+                <p class="text-white/80 text-sm mt-2">임직원을 위한 4가지 독점 혜택</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white text-gray-800 rounded-xl p-6 shadow-lg flex items-start space-x-4">
+                    <div class="bg-pink-100 p-3 rounded-full shrink-0">
+                        <i class="fa-solid fa-arrow-trend-down text-uplus text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">요금 다이어트</h3>
+                        <p class="text-sm text-gray-600">기존 요금 대비 <span class="font-bold text-uplus">최대 35%</span> 확실한 절감 효과를 보장합니다.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white text-gray-800 rounded-xl p-6 shadow-lg flex items-start space-x-4">
+                    <div class="bg-blue-100 p-3 rounded-full shrink-0">
+                        <i class="fa-solid fa-shield-halved text-posco text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">위약금 전액 지원</h3>
+                        <p class="text-sm text-gray-600">타사 전환 시 발생하는 위약금, 고민하지 마세요. <span class="font-bold text-posco">100% 케어</span>해 드립니다.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white text-gray-800 rounded-xl p-6 shadow-lg flex items-start space-x-4">
+                    <div class="bg-purple-100 p-3 rounded-full shrink-0">
+                        <i class="fa-solid fa-clapperboard text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">필수 OTT 결합</h3>
+                        <p class="text-sm text-gray-600">퇴근 후 힐링 타임! 넷플릭스, 디즈니+ 구독료 <span class="font-bold text-purple-600">무료/할인</span> 혜택.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white text-gray-800 rounded-xl p-6 shadow-lg flex items-start space-x-4">
+                    <div class="bg-green-100 p-3 rounded-full shrink-0">
+                        <i class="fa-solid fa-won-sign text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">맞춤형 결제 솔루션</h3>
+                        <p class="text-sm text-gray-600">법인폰 교체부터 <span class="font-bold text-green-600">복지포인트</span> 사용까지 원스톱으로 해결.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Social Proof (Real-time Ticker) -->
+        <section class="py-10 bg-gray-100 border-b border-gray-200">
+            <div class="px-6 mb-4 flex justify-between items-end">
+                <h2 class="text-xl font-bold text-gray-800">📡 실시간 개통 현황</h2>
+                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">LG U+ 공식 인증 대리점</span>
+            </div>
+            
+            <!-- Ticker Container -->
+            <div class="w-full bg-white border-y border-gray-200 py-3 overflow-hidden relative h-12">
+                <div id="ticker-content" class="absolute whitespace-nowrap pl-6 flex items-center space-x-8 text-sm font-medium text-gray-600">
+                    <!-- Ticker items will be injected by JS -->
+                </div>
+            </div>
+
+            <!-- Manager Profile -->
+            <div class="mx-6 mt-6 bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex items-center space-x-4">
+                <div class="w-14 h-14 bg-pink-50 rounded-full overflow-hidden flex items-center justify-center text-2xl text-uplus border border-pink-100 shrink-0">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs text-uplus font-bold mb-0.5">포스코 전담 매니저</p>
+                    <p class="font-bold text-gray-800">신유정</p>
+                    <a href="sms:01080805634" class="mt-2 inline-flex items-center justify-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold transition w-full shadow-sm">
+                        <i class="fa-solid fa-mobile-screen-button text-posco text-base mr-1.5 animate-bounce"></i>
+                        문자로 혜택 물어보기 (010-8080-5634)
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Urgency & CTA (Form) -->
+        <section id="consult-form" class="px-6 py-12 bg-gray-900 text-white">
+            <div class="text-center mb-8">
+                <div class="inline-block bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse mb-3">
+                    🚨 3월 한시 운영
+                </div>
+                <h2 class="text-2xl font-bold mb-2">혜택 종료 임박!</h2>
+                <p class="text-gray-400 text-sm">지금 상담 신청만 해도 <span class="text-yellow-400 font-bold">전원 다이소 쿠폰 100%</span> 증정</p>
+            </div>
+
+            <!-- Coupon Visual -->
+            <div class="bg-white/10 rounded-lg p-4 mb-8 flex items-center justify-center space-x-3 border border-white/20">
+                <i class="fa-solid fa-ticket text-yellow-400 text-3xl"></i>
+                <div class="text-left">
+                    <p class="font-bold text-yellow-400">상담 완료 시 즉시 지급</p>
+                    <p class="text-xs text-gray-300">다이소 5,000원 모바일 쿠폰</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div id="lead-form" class="space-y-4 max-w-sm mx-auto">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1 ml-1">성함</label>
+                    <input type="text" placeholder="예: 김포스" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-uplus focus:ring-1 focus:ring-uplus transition">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1 ml-1">연락처</label>
+                    <input type="tel" placeholder="010-0000-0000" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-uplus focus:ring-1 focus:ring-uplus transition">
+                </div>
+                
+                <div class="flex items-start space-x-2 pt-2">
+                    <input type="checkbox" id="privacy" class="mt-1 accent-pink-600 rounded">
+                    <label for="privacy" class="text-xs text-gray-400 leading-tight">
+                        (필수) 개인정보 수집 및 이용에 동의합니다.<br>
+                        <span class="text-gray-500 text-[10px]">안심하세요! 철저한 보안 시스템으로 안전하게 관리 후 즉시 파기됩니다.</span>
+                    </label>
+                </div>
+
+                <a href="tel:010-8080-5634" class="block w-full text-center bg-[#FAE100] hover:bg-[#FADB00] text-[#371D1E] font-bold py-4 rounded-xl text-lg shadow-lg transform transition active:scale-95 animate-pulse-fast mt-4">
+                    👇 카카오톡 바로 상담하기
+                </a>
+                
+                <div class="text-center text-xs text-gray-500 mt-6 flex flex-col items-center space-y-2">
+                    <span>포스코 전담 매니저 신유정 (평일 09:00~18:00)</span>
+                    <a href="sms:01080805634" class="inline-flex items-center bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-full border border-gray-600 transition shadow-md">
+                        <i class="fa-solid fa-mobile-screen-button text-uplus mr-2 text-lg"></i>
+                        <span class="font-bold tracking-wider text-sm">010-8080-5634 (문자 상담)</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating CTA -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-2">
+        <div class="bg-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-md mb-1 animate-bounce text-gray-800 border border-gray-100">
+            궁금한 점 톡으로!
+            <div class="absolute bottom-[-6px] right-4 w-3 h-3 bg-white border-b border-r border-gray-100 transform rotate-45"></div>
+        </div>
+        <a href="tel:010-8080-5634" class="bg-[#FAE100] hover:bg-[#FADB00] text-[#371D1E] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition transform hover:scale-110">
+            <i class="fa-solid fa-comment text-2xl"></i>
+        </a>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State Management
+        const state = {
+            currentBill: 100000,
+            estimatedSavingRate: 0.25, // 25% avg saving
+            cashBenefit: 1000000, // Fixed cash support estimate (100만원)
+        };
+
+        // --- 1. Interactive Simulator (Chart.js) ---
+        let savingsChart;
+
+        function initChart() {
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            
+            // Initial data calculation
+            const monthlySaving = state.currentBill * state.estimatedSavingRate;
+            const uplusBill = state.currentBill - monthlySaving;
+
+            const config = {
+                type: 'bar',
+                data: {
+                    labels: ['현재 납부액', 'U+ 특판 예상'],
+                    datasets: [{
+                        label: '월 통신비 (원)',
+                        data: [state.currentBill, uplusBill],
+                        backgroundColor: [
+                            '#9CA3AF', // Gray for current
+                            '#E6007E'  // U+ Pink for new
+                        ],
+                        borderRadius: 8,
+                        barThickness: 40,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.toLocaleString() + '원';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { display: false },
+                            ticks: { display: false }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Noto Sans KR', weight: 'bold' } }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            };
+
+            savingsChart = new Chart(ctx, config);
+        }
+
+        function updateCalculator() {
+            const slider = document.getElementById('bill-slider');
+            const display = document.getElementById('bill-display');
+            const totalDisplay = document.getElementById('total-benefit-display');
+            
+            state.currentBill = parseInt(slider.value);
+            
+            // Format slider display
+            display.innerText = state.currentBill.toLocaleString() + '원';
+
+            // Calculate Benefits
+            const monthlySaving = state.currentBill * state.estimatedSavingRate;
+            const twoYearSaving = monthlySaving * 24;
+            const totalBenefit = twoYearSaving + state.cashBenefit;
+            const uplusBill = state.currentBill - monthlySaving;
+
+            // Update Text
+            totalDisplay.innerText = totalBenefit.toLocaleString() + '원';
+
+            // Update Chart
+            savingsChart.data.datasets[0].data = [state.currentBill, uplusBill];
+            savingsChart.update();
+        }
+
+        // --- 2. Social Proof Ticker ---
+        function startTicker() {
+            const ticker = document.getElementById('ticker-content');
+            const messages = [
+                '💬 포항 본사 김OO 책임님, 가족 결합+현금지원 받고 10분 만에 개통 완료!',
+                '💬 계열사 이OO 선임님, 위약금 전액 지원받고 넷플릭스 혜택까지 챙겨가셨습니다!',
+                '💬 광양 제철소 박OO님, 인터넷 결합으로 월 3만원 절약 성공!',
+                '💬 협력사 최OO님, 상담 신청하고 다이소 쿠폰 바로 받았습니다.'
+            ];
+
+            // Duplicate messages for seamless loop
+            const content = messages.map(msg => `<span class="inline-block px-4"><i class="fa-regular fa-circle-check text-green-500 mr-2"></i>${msg}</span>`).join('');
+            ticker.innerHTML = content + content; // Double it
+
+            // Animation logic via CSS is simpler, but let's do JS for strict control if needed.
+            // Using CSS animation for smoothness here.
+            ticker.style.animation = 'marquee 20s linear infinite';
+            
+            // Inject CSS for marquee
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // --- 3. Countdown Timer ---
+        function startCountdown() {
+            const timerEl = document.getElementById('countdown-timer');
+            // Set date to end of current month
+            const now = new Date();
+            const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).getTime();
+
+            setInterval(() => {
+                const current = new Date().getTime();
+                const distance = endDate - current;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                timerEl.innerText = `${days.toString().padStart(2, '0')}일 ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // --- 4. Navigation & Form Handling ---
+        function scrollToForm() {
+            document.getElementById('consult-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initChart();
+            startTicker();
+            startCountdown();
+            
+            // Event Listener for Slider
+            document.getElementById('bill-slider').addEventListener('input', updateCalculator);
+        });
+
+    </script>
+</body>
+</html>
