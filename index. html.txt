@@ -242,10 +242,10 @@
                 </div>
                 <div class="flex-1">
                     <p class="text-xs text-uplus font-bold mb-0.5">포스코 전담 매니저</p>
-                    <p class="font-bold text-gray-800">신유정</p>
+                    <p class="font-bold text-gray-800">김동휘</p>
                     <a href="sms:01080805634" class="mt-2 inline-flex items-center justify-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold transition w-full shadow-sm">
                         <i class="fa-solid fa-mobile-screen-button text-posco text-base mr-1.5 animate-bounce"></i>
-                        문자로 혜택 물어보기 (010-8080-5634)
+                        문자로 혜택 물어보기 (010-8080-5301)
                     </a>
                 </div>
             </div>
@@ -473,4 +473,5 @@
 
     </script>
 </body>
+
 </html>
